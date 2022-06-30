@@ -7,8 +7,10 @@
 #include <QLineSeries>
 
 #include "qcustomplot.h"
+#include "mainwindow.h"
 
 QT_CHARTS_USE_NAMESPACE
+//class MainWindow;
 
 namespace Ui {
 class Chart;
@@ -31,10 +33,15 @@ private:
     QTimer dataTimer;
     QCPItemTracer *itemDemoPhaseTracer;
     int currentDemoIndex;
+    //MainWindow& mwindow;
+    //int eround=MainWindow::encoderround1;
+    //int mround=MainWindow::motoround1;
+    //int bround=MainWindow::biground1;
 
 private slots:
     void slotBtnClear();
-    void realtimeDataSlot();
+    void realtimeDataSlot(/*int eround,int mround,int bround*/);
+    //void receiveData(int a,int b,int c);
 };
 
 #endif // CHART_H

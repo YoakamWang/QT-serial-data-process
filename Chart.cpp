@@ -1,46 +1,7 @@
-/***************************************************************************
-**                                                                        **
-**  QCustomPlot, an easy to use, modern plotting widget for Qt            **
-**  Copyright (C) 2011-2021 Emanuel Eichhammer                            **
-**                                                                        **
-**  This program is free software: you can redistribute it and/or modify  **
-**  it under the terms of the GNU General Public License as published by  **
-**  the Free Software Foundation, either version 3 of the License, or     **
-**  (at your option) any later version.                                   **
-**                                                                        **
-**  This program is distributed in the hope that it will be useful,       **
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of        **
-**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         **
-**  GNU General Public License for more details.                          **
-**                                                                        **
-**  You should have received a copy of the GNU General Public License     **
-**  along with this program.  If not, see http://www.gnu.org/licenses/.   **
-**                                                                        **
-****************************************************************************
-**           Author: Emanuel Eichhammer                                   **
-**  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 29.03.21                                             **
-**          Version: 2.1.0                                                **
-****************************************************************************/
-
-/************************************************************************************************************
-**                                                                                                         **
-**  This is the example code for QCustomPlot.                                                              **
-**                                                                                                         **
-**  It demonstrates basic and some advanced capabilities of the widget. The interesting code is inside     **
-**  the "setup(...)Demo" functions of Chart.                                                          **
-**                                                                                                         **
-**  In order to see a demo in action, call the respective "setup(...)Demo" function inside the             **
-**  Chart constructor. Alternatively you may call setupDemo(i) where i is the index of the demo       **
-**  you want (for those, see Chart constructor comments). All other functions here are merely a       **
-**  way to easily create screenshots of all demos for the website. I.e. a timer is set to successively     **
-**  setup all the demos and make a screenshot of the window area and save it in the ./screenshots          **
-**  directory.                                                                                             **
-**                                                                                                         **
-*************************************************************************************************************/
-
 #include "Chart.h"
 #include "ui_chart.h"
+#include "mainwindow.h"
+
 #include <QDebug>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #  include <QDesktopWidget>
@@ -49,10 +10,14 @@
 #include <QMessageBox>
 #include <QMetaEnum>
 
+int MainWindow::encoderround1;    //catch the data from MainWindow.
+int MainWindow::motoround1;
+int MainWindow::biground1;
 Chart::Chart(QWidget *parent) :
   QWidget(parent),
   ui(new Ui::Chart)
 {
+
   ui->setupUi(this);
   setGeometry(400, 250, 542, 390);
   QObject::connect(ui->clearButton, SIGNAL(clicked(bool)), this, SLOT(slotBtnClear()));
@@ -110,15 +75,22 @@ void Chart::setupRealtimeDataDemo(QCustomPlot *customPlot)
   connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
   // setup a timer that repeatedly calls Chart::realtimeDataSlot:
-  connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+  connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot(/*int a2,int b2,int c2*/)));
   customPlot->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom|QCP::iSelectPlottables);//can drag and zoom
+    //customPlot->legend->setBrush(QColor(255,255,255,0));
+  customPlot->graph(0)->setName("Encoder Rotation Rate"); //set the legend name
+  customPlot->graph(1)->setName("Motor Rotation Rate");
+  customPlot->graph(2)->setName("BigWheel Rotation Rate");
 
-  dataTimer.start(10); // Interval 0 means to refresh as fast as possible
+  //customPlot->graph(3)->removeFromLegend();
+  customPlot->legend->setVisible(true); //display the legend with all graphs
+  dataTimer.start(15); // Interval 0 means to refresh as fast as possible
 }
 
 
 void Chart::realtimeDataSlot()
 {
+
   static QTime timeStart = QTime::currentTime();
   // calculate two new data points:
   //double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
@@ -127,12 +99,16 @@ void Chart::realtimeDataSlot()
   //if (key-lastPointKey > 0.002) // at most add point every 2 ms
    if (key-lastPointKey > 0.2)
   {
+    //connect(&mwindow,SIGNAL(sendDataChart(int a3,int b3,int c3)),this,SLOT(receiveData(int a1,int b1,int c1)));
     // add data to lines:
     //ui->customPlot->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
     //ui->customPlot->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-       ui->customPlot->graph(0)->addData(key, rand()%700);
-       ui->customPlot->graph(1)->addData(key, rand()%700);
-       ui-> customPlot->graph(2)->addData(key, rand()%500);
+//       int eround=MainWindow::encoderround1;
+//       int mround=MainWindow::motoround1;
+//       int bround=MainWindow::biground1;
+       ui->customPlot->graph(0)->addData(key, MainWindow::encoderround1);
+       ui->customPlot->graph(1)->addData(key, MainWindow::motoround1);
+       ui->customPlot->graph(2)->addData(key, MainWindow::biground1);
         //   customPlot->graph(3)->addData(key, rand()%400);
           // customPlot->graph(4)->addData(key, rand()%250);
          //  customPlot->graph(5)->addData(key, rand()%100);
@@ -144,7 +120,7 @@ void Chart::realtimeDataSlot()
   // make key axis range scroll with the data (at a constant range size of 8):
   //ui->customPlot->xAxis->setRange(key, 8, Qt::AlignRight);
    ui->customPlot->xAxis->setRange(key, 10, Qt::AlignRight);
-  ui->customPlot->replot();
+   ui->customPlot->replot();
 
   // calculate frames per second:
   static double lastFpsKey;
@@ -161,7 +137,6 @@ void Chart::realtimeDataSlot()
     frameCount = 0;
   }
 }
-
 
 
 Chart::~Chart()

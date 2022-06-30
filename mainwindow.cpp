@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->connectButton, &QPushButton::clicked, this, &MainWindow::openSerialPort);
     connect(ui->disconnectButton, &QPushButton::clicked, this, &MainWindow::closeSerialPort);
     connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
+    //connect(this,SIGNAL(signal_data(QString)),class::getInstance(),SLOT(slot_data(QString)));
 }
 
 void MainWindow::openSerialPort()
@@ -60,6 +61,9 @@ void MainWindow::closeSerialPort()
     ui->connectButton->setEnabled(true);
     ui->disconnectButton->setEnabled(false);
     ui->configButton->setEnabled(true);
+    encoderround1=0;
+    motoround1=0;
+    biground1=0;
     showStatusMessage(tr("Disconnected"));
 }
 void MainWindow::readData()
@@ -74,9 +78,13 @@ void MainWindow::readData()
     QDateTime current_date_time =QDateTime::currentDateTime();
     QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
     QTextStream out(&m_file_save);
-    QThread::msleep(15);                                       //delay 15ms
+    QThread::msleep(15);     //delay 15ms
+    encoderround1=200;
+    biground1=800;
+    motoround1=300;
+    emit sendDataChart(encoderround1,biground1,motoround1);
     out<<current_date<<","<<1<<","<<2<<","<<3<<"\n";
-    qDebug()<<data;
+    //qDebug()<<data;
 }
 void MainWindow::showStatusMessage(const QString &message)
 {
