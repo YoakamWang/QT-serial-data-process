@@ -30,8 +30,8 @@ private slots:
     void closeSerialPort();
     void readData();
 
-signals:
-    void sendDataChart(int encoderround,int motoround,int biground);
+//signals:
+//    void sendDataChart(int encoderround,int motoround,int biground);
 
 private:
     void showStatusMessage(const QString &message);

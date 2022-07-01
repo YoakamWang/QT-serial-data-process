@@ -70,7 +70,6 @@ void MainWindow::readData()
 {
     const QByteArray data = m_serial->readAll();
     //process the serial data here
-    //process the serial data here
     //const char *mm=data.data();
     //QString str1=mm;
     //int heartnum=str1.mid(4,6).toInt();
@@ -82,7 +81,7 @@ void MainWindow::readData()
     encoderround1=200;
     biground1=800;
     motoround1=300;
-    emit sendDataChart(encoderround1,biground1,motoround1);
+    //emit sendDataChart(encoderround1,biground1,motoround1);
     out<<current_date<<","<<1<<","<<2<<","<<3<<"\n";
     //qDebug()<<data;
 }
