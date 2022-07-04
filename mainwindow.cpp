@@ -61,7 +61,7 @@ void MainWindow::openSerialPort()
     } else {
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
 
-        //showStatusMessage(tr("Open error"));
+        showStatusMessage(tr("Serial Open error"));
     }
 }
 void MainWindow::closeSerialPort()
