@@ -33,10 +33,9 @@ private:
     QTimer dataTimer;
     QCPItemTracer *itemDemoPhaseTracer;
     int currentDemoIndex;
+    //MainWindow *m_SerialData=nullptr;
     //MainWindow& mwindow;
-    //int eround=MainWindow::encoderround1;
-    //int mround=MainWindow::motoround1;
-    //int bround=MainWindow::biground1;
+
 
 private slots:
     void slotBtnClear();

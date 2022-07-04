@@ -13,9 +13,11 @@
 int MainWindow::encoderround1;    //catch the data from MainWindow.
 int MainWindow::motoround1;
 int MainWindow::biground1;
+
 Chart::Chart(QWidget *parent) :
   QWidget(parent),
   ui(new Ui::Chart)
+  //m_SerialData(new MainWindow1),
 {
 
   ui->setupUi(this);
@@ -69,7 +71,7 @@ void Chart::setupRealtimeDataDemo(QCustomPlot *customPlot)
   customPlot->axisRect()->setupFullAxesBox();
   //customPlot->yAxis->setRange(-1.2, 1.2);
   customPlot->xAxis->setRange(0,1000);
-  customPlot->yAxis->setRange(0, 1000);
+  customPlot->yAxis->setRange(-5000, 5000);
   // make left and bottom axes transfer their ranges to right and top axes:
   connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
   connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
@@ -78,20 +80,21 @@ void Chart::setupRealtimeDataDemo(QCustomPlot *customPlot)
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot(/*int a2,int b2,int c2*/)));
   customPlot->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom|QCP::iSelectPlottables);//can drag and zoom
     //customPlot->legend->setBrush(QColor(255,255,255,0));
-  customPlot->graph(0)->setName("Encoder Rotation Rate"); //set the legend name
-  customPlot->graph(1)->setName("Motor Rotation Rate");
-  customPlot->graph(2)->setName("BigWheel Rotation Rate");
+  customPlot->graph(0)->setName("Encoder Rotation"); //set the legend name
+  customPlot->graph(1)->setName("Motor Rotation");
+  customPlot->graph(2)->setName("BigWheel Rotation");
+  customPlot->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignBottom);     //set the legend location
 
   //customPlot->graph(3)->removeFromLegend();
   customPlot->legend->setVisible(true); //display the legend with all graphs
-  dataTimer.start(15); // Interval 0 means to refresh as fast as possible
+  dataTimer.start(50); // Interval 0 means to refresh as fast as possible
 }
 
 
 void Chart::realtimeDataSlot()
 {
 
-  static QTime timeStart = QTime::currentTime();
+  //static QTime timeStart = QTime::currentTime();
   // calculate two new data points:
   //double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
   double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -103,12 +106,13 @@ void Chart::realtimeDataSlot()
     // add data to lines:
     //ui->customPlot->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
     //ui->customPlot->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-//       int eround=MainWindow::encoderround1;
-//       int mround=MainWindow::motoround1;
-//       int bround=MainWindow::biground1;
-       ui->customPlot->graph(0)->addData(key, MainWindow::encoderround1);
-       ui->customPlot->graph(1)->addData(key, MainWindow::motoround1);
-       ui->customPlot->graph(2)->addData(key, MainWindow::biground1);
+       int eround=MainWindow::encoderround1;
+       int mround=MainWindow::motoround1;
+       int bround=MainWindow::biground1;
+       //const MainWiSerialData pp=m_SerialData->serialdata();
+       ui->customPlot->graph(0)->addData(key, /*pp.enround*/ eround);
+       ui->customPlot->graph(1)->addData(key, /*pp.motoround*/ mround);
+       ui->customPlot->graph(2)->addData(key, /*pp.biground*/bround);
         //   customPlot->graph(3)->addData(key, rand()%400);
           // customPlot->graph(4)->addData(key, rand()%250);
          //  customPlot->graph(5)->addData(key, rand()%100);

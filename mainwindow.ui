@@ -25,6 +25,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="writeButton">
+        <property name="text">
+         <string>Send Data</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="disconnectButton">
         <property name="text">
          <string>Disconnect</string>
