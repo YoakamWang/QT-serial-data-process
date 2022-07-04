@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
 
 public:
     static int encoderround1; //Transfer the serial data from mainwindow to chart.
-    static int motoround1;
+    static float motoround1;
     static int biground1;
 //    struct SerialData{
 //        int enround;
@@ -32,7 +32,7 @@ public:
 private slots:
     void openSerialPort();
     void closeSerialPort();
-    //void readData();
+    void readData();
     void writeData();
 
 //signals:
@@ -48,7 +48,7 @@ private:
     QSerialPort *m_serial = nullptr;
     QLabel *m_status = nullptr;
     QFile m_file_save;
-    //QTimer wriDataTimer;
+    QTimer wriDataTimer;
     //SerialData m_serialData;
 
 };

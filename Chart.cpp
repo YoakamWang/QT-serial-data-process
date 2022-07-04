@@ -11,7 +11,7 @@
 #include <QMetaEnum>
 
 int MainWindow::encoderround1;    //catch the data from MainWindow.
-int MainWindow::motoround1;
+float MainWindow::motoround1;
 int MainWindow::biground1;
 
 Chart::Chart(QWidget *parent) :

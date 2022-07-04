@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->connectButton, &QPushButton::clicked, this, &MainWindow::openSerialPort);
     connect(ui->disconnectButton, &QPushButton::clicked, this, &MainWindow::closeSerialPort);
     connect(ui->writeButton,&QPushButton::clicked,this,&MainWindow::writeData);
-    //connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
+    connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
     //connect(this,SIGNAL(signal_data(QString)),class::getInstance(),SLOT(slot_data(QString)));
 }
 //MainWindow::SerialData MainWindow::serialdata() const{
@@ -56,8 +56,8 @@ void MainWindow::openSerialPort()
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                          .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                          .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
-//        connect(&wriDataTimer, SIGNAL(timeout()), this, SLOT(writeData()));                    //Timer for loop function
-//        wriDataTimer.start(100);                                                               //Set the interal as 100 ms.
+/*       connect(&wriDataTimer, SIGNAL(timeout()), this, SLOT(writeData()));                    //Timer for loop function
+       wriDataTimer.start(400); */                                                              //Set the interal as 100 ms.
     } else {
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
 
@@ -89,48 +89,100 @@ MainWindow::~MainWindow()
     m_file_save.close();
     delete ui;
 }
-
-
 void MainWindow::writeData()
 {
-    while(m_serial->isOpen()){
-        QByteArray str1="#0140";
-        m_serial->write(str1);
-        if(&QSerialPort::readyRead){
-            const QByteArray data = m_serial->readAll();
-            QString sss;
-            for (int i=2;i<data.size()-1;i++){
-                  sss.append(data[i]);
-            }
-            encoderround1=sss.toInt();
-        }
-        QByteArray str2="#0141";
-        m_serial->write(str2);
-        if(&QSerialPort::readyRead){
-            const QByteArray data = m_serial->readAll();
-            QString sss;
-            for (int i=2;i<data.size()-1;i++){
-                  sss.append(data[i]);
-            }
-            motoround1=sss.toInt();
-        }
-        QByteArray str3="#0142";
-        m_serial->write(str3);
-        if(&QSerialPort::readyRead){
-            const QByteArray data = m_serial->readAll();
-            QString sss;
-            for (int i=2;i<data.size()-1;i++){
-                  sss.append(data[i]);
-            }
-            biground1=sss.toInt();
-        }
-        QDateTime current_date_time =QDateTime::currentDateTime();
-        QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
-        QTextStream out(&m_file_save);
-        out<<current_date<<","<<encoderround1<<","<<motoround1<<","<<biground1<<"\n";
-        QThread::msleep(500);
+    const QByteArray str1="#0140";
+    //qDebug()<<1;
+      m_serial->write(str1);
+ }
+void MainWindow::readData()
+{
+ //    if(m_serial->waitForReadyRead()){
+      const QByteArray str1="#0164";
+    //qDebug()<<1;
+      m_serial->write(str1);
+        const QByteArray data = m_serial->readAll();
+        const char *mm=data.data();
+        QString sss=mm;
+        encoderround1=sss.mid(2).toFloat();
+       qDebug()<<encoderround1;
+    //QThread::msleep(50);
+
+
+     if(m_serial->waitForReadyRead()){
+         const QByteArray str2="#0141";
+          m_serial->write(str2);
+        const QByteArray data1 = m_serial->readLine();
+       const char *mm1=data1.data();
+         QString sss1=mm1;
+        motoround1=sss1.mid(2).toFloat();
+       qDebug()<<motoround1;
+ }
+    //QThread::msleep(50);
+     if(m_serial->waitForReadyRead()){
+                QByteArray str3="#0140";
+                m_serial->write(str3);
+            const QByteArray data2= m_serial->readLine();
+
+           const char *mm2=data2.data();
+             QString sss2=mm2;
+            biground1=sss2.mid(1).toInt();
+             qDebug()<<biground1;
     }
+    QDateTime current_date_time =QDateTime::currentDateTime();
+    QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
+    QTextStream out(&m_file_save);
+     // qDebug()<<encoderround1<<","<<motoround1<<","<<biground1;
+    out<<current_date<<","<<encoderround1<<","<<motoround1<<","<<biground1<<"\n";
+    QThread::msleep(150);
 }
+
+//void MainWindow::writeData()
+//{
+//    const QByteArray str1="#0140";
+//    //qDebug()<<1;
+//      m_serial->write(str1);
+//      if(m_serial->waitForBytesWritten()){
+//       const QByteArray data = m_serial->readAll();
+//          const char *mm=data.data();
+//          QString sss=mm;
+//          encoderround1=sss.mid(2).toFloat();
+//         qDebug()<<encoderround1;}
+
+
+//         const QByteArray str2="#0164";
+//         m_serial->write(str2);
+//         if(m_serial->waitForBytesWritten()){
+//              if(m_serial->waitForReadyRead()){
+//        const QByteArray data1 = m_serial->readAll();
+//              const char *mm1=data1.data();
+//                QString sss1=mm1;
+//               motoround1=sss1.mid(2).toFloat();
+//             qDebug()<<motoround1;}
+// }
+
+
+//                QByteArray str3="#0141";
+//                m_serial->write(str3);
+//                if(m_serial->waitForBytesWritten()){
+//                    if(m_serial->waitForReadyRead()){
+//            const QByteArray data2= m_serial->readAll();
+
+//           const char *mm2=data2.data();
+//             QString sss2=mm2;
+//            biground1=sss2.mid(2).toInt();
+//             qDebug()<<biground1;}
+//    }
+
+//}
+//void MainWindow::readData(){
+
+//}
+
+
+
+
+
 //void MainWindow::readData()
 //{
 //    const QByteArray data = m_serial->readAll();
