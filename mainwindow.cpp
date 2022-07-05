@@ -71,6 +71,7 @@ void MainWindow::closeSerialPort()
     ui->connectButton->setEnabled(true);
     ui->disconnectButton->setEnabled(false);
     ui->configButton->setEnabled(true);
+    ui->writeButton->setEnabled(false);
 //    m_serialData.enround=0;
 //    m_serialData.motoround=0;
 //    m_serialData.biground=0;
@@ -104,19 +105,20 @@ void MainWindow::readData()
         const QByteArray data = m_serial->readAll();
         const char *mm=data.data();
         QString sss=mm;
-        encoderround1=sss.mid(2).toFloat();
-       qDebug()<<encoderround1;
+        encoderround1=sss.mid(1).toInt();
+       //qDebug()<<encoderround1;
     //QThread::msleep(50);
 
 
      if(m_serial->waitForReadyRead()){
          const QByteArray str2="#0141";
           m_serial->write(str2);
-        const QByteArray data1 = m_serial->readLine();
-       const char *mm1=data1.data();
+         const QByteArray data1 = m_serial->readLine();
+         const char *mm1=data1.data();
          QString sss1=mm1;
-        motoround1=sss1.mid(2).toFloat();
-       qDebug()<<motoround1;
+         double xishu=4.003;
+         motoround1=sss1.mid(1).toDouble()*xishu;
+        // qDebug()<<motoround1;
  }
     //QThread::msleep(50);
      if(m_serial->waitForReadyRead()){
@@ -127,7 +129,7 @@ void MainWindow::readData()
            const char *mm2=data2.data();
              QString sss2=mm2;
             biground1=sss2.mid(1).toInt();
-             qDebug()<<biground1;
+            // qDebug()<<biground1;
     }
     QDateTime current_date_time =QDateTime::currentDateTime();
     QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");

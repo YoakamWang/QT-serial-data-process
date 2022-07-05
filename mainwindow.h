@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
 
 public:
     static int encoderround1; //Transfer the serial data from mainwindow to chart.
-    static float motoround1;
+    static double motoround1;
     static int biground1;
 //    struct SerialData{
 //        int enround;
