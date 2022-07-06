@@ -56,8 +56,8 @@ void MainWindow::openSerialPort()
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                          .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                          .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
-/*       connect(&wriDataTimer, SIGNAL(timeout()), this, SLOT(writeData()));                    //Timer for loop function
-       wriDataTimer.start(400); */                                                              //Set the interal as 100 ms.
+      connect(&wriDataTimer, SIGNAL(timeout()), this, SLOT(writeData()));                    //Timer for loop function
+       wriDataTimer.start(300000);                                                              //Set the interal as 100 ms.
     } else {
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
 
@@ -111,7 +111,7 @@ void MainWindow::readData()
 
 
      if(m_serial->waitForReadyRead()){
-         const QByteArray str2="#0141";
+         const QByteArray str2="#0143";
           m_serial->write(str2);
          const QByteArray data1 = m_serial->readLine();
          const char *mm1=data1.data();
@@ -125,18 +125,19 @@ void MainWindow::readData()
                 QByteArray str3="#0140";
                 m_serial->write(str3);
             const QByteArray data2= m_serial->readLine();
-
-           const char *mm2=data2.data();
+            //qDebug()<<data2;
+            const char *mm2=data2.data();
              QString sss2=mm2;
-            biground1=sss2.mid(1).toInt();
-            // qDebug()<<biground1;
+             double xishu11=12.05;
+            biground1=sss2.mid(1).toDouble()*xishu11;
+             //qDebug()<<biground1;
     }
     QDateTime current_date_time =QDateTime::currentDateTime();
     QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
     QTextStream out(&m_file_save);
      // qDebug()<<encoderround1<<","<<motoround1<<","<<biground1;
     out<<current_date<<","<<encoderround1<<","<<motoround1<<","<<biground1<<"\n";
-    QThread::msleep(150);
+    QThread::msleep(480);
 }
 
 //void MainWindow::writeData()
