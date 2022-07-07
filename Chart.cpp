@@ -10,9 +10,9 @@
 #include <QMessageBox>
 #include <QMetaEnum>
 
-int MainWindow::encoderround1;    //catch the data from MainWindow.
-double MainWindow::motoround1;
-double MainWindow::biground1;
+int MainWindow::inner;    //catch the data from MainWindow.
+double MainWindow::moto;
+double MainWindow::outer;
 
 Chart::Chart(QWidget *parent) :
   QWidget(parent),
@@ -80,9 +80,9 @@ void Chart::setupRealtimeDataDemo(QCustomPlot *customPlot)
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot(/*int a2,int b2,int c2*/)));
   customPlot->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom|QCP::iSelectPlottables);//can drag and zoom
     //customPlot->legend->setBrush(QColor(255,255,255,0));
-  customPlot->graph(0)->setName("Encoder Rotation"); //set the legend name
-  customPlot->graph(1)->setName("Motor Rotation");
-  customPlot->graph(2)->setName("BigWheel Rotation");
+  customPlot->graph(0)->setName("Inner"); //set the legend name
+  customPlot->graph(1)->setName("Moto");
+  customPlot->graph(2)->setName("Outer");
   customPlot->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignBottom);     //set the legend location
 
   //customPlot->graph(3)->removeFromLegend();
@@ -106,9 +106,9 @@ void Chart::realtimeDataSlot()
     // add data to lines:
     //ui->customPlot->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
     //ui->customPlot->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-       int eround=MainWindow::encoderround1;
-       int mround=MainWindow::motoround1;
-       int bround=MainWindow::biground1;
+       int eround=MainWindow::inner;
+       int mround=MainWindow::moto;
+       int bround=MainWindow::outer;
        //const MainWiSerialData pp=m_SerialData->serialdata();
        ui->customPlot->graph(0)->addData(key, /*pp.enround*/ eround);
        ui->customPlot->graph(1)->addData(key, /*pp.motoround*/ mround);

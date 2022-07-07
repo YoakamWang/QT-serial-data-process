@@ -57,7 +57,7 @@ void MainWindow::openSerialPort()
                          .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                          .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
       connect(&wriDataTimer, SIGNAL(timeout()), this, SLOT(writeData()));                    //Timer for loop function
-       wriDataTimer.start(300000);                                                              //Set the interal as 100 ms.
+       wriDataTimer.start(120000);                                                              //Set the interal as 100 ms.
     } else {
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
 
@@ -75,9 +75,9 @@ void MainWindow::closeSerialPort()
 //    m_serialData.enround=0;
 //    m_serialData.motoround=0;
 //    m_serialData.biground=0;
-    encoderround1=0;
-    motoround1=0;
-    biground1=0;
+    inner=0;
+    moto=0;
+    outer=0;
     showStatusMessage(tr("Disconnected"));
 }
 
@@ -105,7 +105,8 @@ void MainWindow::readData()
         const QByteArray data = m_serial->readAll();
         const char *mm=data.data();
         QString sss=mm;
-        encoderround1=sss.mid(1).toInt();
+        double xishu2=1.33;
+        inner=sss.mid(2).toInt()*xishu2;
        //qDebug()<<encoderround1;
     //QThread::msleep(50);
 
@@ -117,7 +118,7 @@ void MainWindow::readData()
          const char *mm1=data1.data();
          QString sss1=mm1;
          double xishu=4.003;
-         motoround1=sss1.mid(1).toDouble()*xishu;
+         moto=sss1.mid(2).toDouble()*xishu;    //start 1, catch the zheng/fu, start2, ignore the zheng/fu
         // qDebug()<<motoround1;
  }
     //QThread::msleep(50);
@@ -128,16 +129,16 @@ void MainWindow::readData()
             //qDebug()<<data2;
             const char *mm2=data2.data();
              QString sss2=mm2;
-             double xishu11=12.05;
-            biground1=sss2.mid(1).toDouble()*xishu11;
+             double xishu11=1.32;
+            outer=sss2.mid(2).toDouble()*xishu11;
              //qDebug()<<biground1;
     }
     QDateTime current_date_time =QDateTime::currentDateTime();
     QString current_date =current_date_time.toString("yyyy.MM.dd hh:mm:ss.zzz");
     QTextStream out(&m_file_save);
      // qDebug()<<encoderround1<<","<<motoround1<<","<<biground1;
-    out<<current_date<<","<<encoderround1<<","<<motoround1<<","<<biground1<<"\n";
-    QThread::msleep(480);
+    out<<current_date<<","<<inner<<","<<moto<<","<<outer<<"\n";
+    QThread::msleep(490);
 }
 
 //void MainWindow::writeData()

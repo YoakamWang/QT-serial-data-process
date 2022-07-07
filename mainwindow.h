@@ -16,9 +16,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    static int encoderround1; //Transfer the serial data from mainwindow to chart.
-    static double motoround1;
-    static double biground1;
+    static int inner; //Transfer the serial data from mainwindow to chart.
+    static double moto;
+    static double outer;
 //    struct SerialData{
 //        int enround;
 //        int motoround;
